@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Simple GitHub Pages Site</title>
+  <title>Your Name — Simple Site</title>
   <style>
     /* Basic reset */
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -13,6 +13,17 @@
     .wrap { display: flex; min-height: 100vh; }
     nav { width: 220px; border-right: 1px solid #e3e3e3; padding: 16px; background: #fafafa; }
     main { flex: 1; padding: 24px; }
+
+    /* Site title */
+    .site-title {
+      margin-bottom: 14px;
+      font-weight: 700;
+      font-size: 16px;
+      display: block;
+      text-decoration: none;
+      color: inherit;
+    }
+    .site-sub { font-size: 12px; color: #666; margin-top: 4px; }
 
     /* Nav list */
     .nav-list { list-style: none; }
@@ -31,6 +42,7 @@
       font-size: 15px;
     }
     .nav-list a:hover, .nav-list button:hover { background: #f0f0f0; }
+    .nav-list a[aria-current="true"] { background: #e9f3ff; font-weight: 600; }
 
     /* Expandable submenu */
     .expand-btn { font-weight: 600; }
@@ -51,49 +63,59 @@
     /* Content headings */
     h1 { margin-bottom: 10px; font-size: 24px; }
     p { color: #444; line-height: 1.5; }
+
+    /* Hide sections by default; show when .active */
+    .content-section { display: none; }
+    .content-section.active { display: block; }
   </style>
 </head>
 <body>
   <div class="wrap">
     <nav aria-label="Main navigation">
+      <!-- Add your name here (top-left) -->
+      <a href="#about" class="site-title" id="siteTitle">Your Name
+        <div class="site-sub">Short title or role</div>
+      </a>
+
       <ul class="nav-list">
-        <li><a href="#about">About</a></li>
-        <li><a href="#cv">CV</a></li>
+        <li><a href="#about" data-target="about">About</a></li>
+        <li><a href="#cv" data-target="cv">CV</a></li>
 
         <li>
           <button class="expand-btn" aria-expanded="false" id="blogToggle">Blog</button>
           <ul class="submenu" aria-label="Blog posts">
-            <li><a href="#post1">2025-09-01 — First post</a></li>
-            <li><a href="#post2">2025-08-15 — Another post</a></li>
+            <li><a href="#post1" data-target="post1">2025-09-01 — First post</a></li>
+            <li><a href="#post2" data-target="post2">2025-08-15 — Another post</a></li>
           </ul>
         </li>
 
-        <li><a href="#contact">Contact</a></li>
+        <li><a href="#contact" data-target="contact">Contact</a></li>
       </ul>
     </nav>
 
-    <main>
-      <section id="about">
+    <main id="mainContent">
+      <!-- Sections are present but hidden until selected -->
+      <section id="about" class="content-section">
         <h1>About</h1>
-        <p>This is a simple GitHub Pages template with a left navigation and expandable items.</p>
+        <p>This is a simple GitHub Pages template. Only the selected section is shown.</p>
       </section>
 
-      <section id="cv" style="margin-top:28px;">
+      <section id="cv" class="content-section">
         <h1>CV</h1>
         <p>Put your resume details or a downloadable link here.</p>
       </section>
 
-      <section id="post1" style="margin-top:28px;">
+      <section id="post1" class="content-section">
         <h1>2025-09-01 — First post</h1>
         <p>Example blog post content.</p>
       </section>
 
-      <section id="post2" style="margin-top:28px;">
+      <section id="post2" class="content-section">
         <h1>2025-08-15 — Another post</h1>
         <p>Another example post.</p>
       </section>
 
-      <section id="contact" style="margin-top:28px;">
+      <section id="contact" class="content-section">
         <h1>Contact</h1>
         <p>How to reach you.</p>
       </section>
@@ -101,21 +123,91 @@
   </div>
 
   <script>
-    // Toggle submenu open/close
-    document.getElementById('blogToggle').addEventListener('click', function () {
-      var btn = this;
-      var expanded = btn.getAttribute('aria-expanded') === 'true';
-      btn.setAttribute('aria-expanded', String(!expanded));
-    });
+    // Simple router: show section based on location.hash
+    (function () {
+      var links = document.querySelectorAll('.nav-list a');
+      var sections = document.querySelectorAll('.content-section');
+      var blogToggle = document.getElementById('blogToggle');
 
-    // Optional: close submenu when clicking outside (mobile convenience)
-    document.addEventListener('click', function (e) {
-      var btn = document.getElementById('blogToggle');
-      var nav = btn.closest('nav');
-      if (!nav.contains(e.target) && btn.getAttribute('aria-expanded') === 'true') {
-        btn.setAttribute('aria-expanded', 'false');
+      function showSection(id) {
+        // hide all
+        sections.forEach(function (s) {
+          s.classList.remove('active');
+        });
+
+        // set active link aria-current
+        links.forEach(function (a) {
+          var target = a.getAttribute('data-target');
+          a.removeAttribute('aria-current');
+          if (target === id) a.setAttribute('aria-current', 'true');
+        });
+
+        // show target if exists, otherwise show about
+        var targetEl = document.getElementById(id);
+        if (!targetEl) {
+          targetEl = document.getElementById('about');
+          history.replaceState(null, '', '#about');
+        }
+        targetEl.classList.add('active');
+
+        // If the shown section is a blog post, expand blog submenu; otherwise collapse it.
+        if (id && id.startsWith('post')) {
+          blogToggle.setAttribute('aria-expanded', 'true');
+        } else {
+          blogToggle.setAttribute('aria-expanded', 'false');
+        }
+
+        // ensure focus for keyboard users
+        targetEl.setAttribute('tabindex', '-1');
+        targetEl.focus({ preventScroll: true });
       }
-    });
+
+      // Initialize: respond to the current hash
+      function init() {
+        var hash = (location.hash || '#about').replace(/^#/, '');
+        showSection(hash);
+
+        // click on blog toggle expands/collapses submenu but does not change section
+        blogToggle.addEventListener('click', function () {
+          var expanded = this.getAttribute('aria-expanded') === 'true';
+          this.setAttribute('aria-expanded', String(!expanded));
+        });
+
+        // update when hash changes (back/forward or links)
+        window.addEventListener('hashchange', function () {
+          var newHash = (location.hash || '#about').replace(/^#/, '');
+          showSection(newHash);
+        });
+
+        // also handle clicks on nav links to ensure behavior (hash change will also run)
+        links.forEach(function (a) {
+          a.addEventListener('click', function () {
+            // allow default hash change to happen; the hashchange listener handles display
+            // but on same-hash click, hashchange might not fire -> handle by reading href
+            var href = a.getAttribute('href') || '';
+            var id = (href.startsWith('#') ? href.replace(/^#/, '') : a.getAttribute('data-target'));
+            // small timeout to allow hash to update; if same hash, call showSection directly
+            setTimeout(function () {
+              var current = (location.hash || '#about').replace(/^#/, '');
+              if (current === id) showSection(id);
+            }, 0);
+          });
+        });
+      }
+
+      // Small helper to ensure the main content is focusable for accessibility
+      document.addEventListener('click', function (e) {
+        // close blog when clicking outside nav for convenience on small screens
+        var nav = document.querySelector('nav');
+        if (!nav.contains(e.target)) {
+          if (blogToggle.getAttribute('aria-expanded') === 'true') {
+            blogToggle.setAttribute('aria-expanded', 'false');
+          }
+        }
+      });
+
+      init();
+    })();
   </script>
 </body>
 </html>
