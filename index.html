@@ -91,7 +91,7 @@
         </li>
           
          <li>
-          <button class="expand-btn" aria-expanded="false" id="blogToggle">Videos</button>
+          <button class="expand-btn" aria-expanded="false" id="YoutubeVideos">Videos</button>
           <ul class="submenu" aria-label="Blog posts">
             <li><a href="#video1" data-target="video1">Why is Everything the Same Brightness?</a></li>
             <li><a href="#video2" data-target="video2">In Progress...</a></li>
@@ -150,6 +150,7 @@ You can reach me via <a href= "mailto:miladaburass@pm.me">email</a>. I am also o
       var links = document.querySelectorAll('.nav-list a');
       var sections = document.querySelectorAll('.content-section');
       var blogToggle = document.getElementById('blogToggle');
+      var youtubeToggle = document.getElementById('YoutubeVideos');
 
       function showSection(id) {
         // hide all
@@ -195,6 +196,12 @@ You can reach me via <a href= "mailto:miladaburass@pm.me">email</a>. I am also o
           this.setAttribute('aria-expanded', String(!expanded));
         });
 
+        // Click on blog toggle expands/collapses submenu but does not change section
+      blogToggle.addEventListener('click', function () {
+        var expanded = this.getAttribute('aria-expanded') === 'true';
+        this.setAttribute('aria-expanded', String(!expanded));
+      });
+
         // update when hash changes (back/forward or links)
         window.addEventListener('hashchange', function () {
           var newHash = (location.hash || '#about').replace(/^#/, '');
@@ -224,6 +231,9 @@ You can reach me via <a href= "mailto:miladaburass@pm.me">email</a>. I am also o
         if (!nav.contains(e.target)) {
           if (blogToggle.getAttribute('aria-expanded') === 'true') {
             blogToggle.setAttribute('aria-expanded', 'false');
+          }
+          if (youtubeToggle.getAttribute('aria-expanded') === 'true') { // Close YouTube if clicked outside
+          youtubeToggle.setAttribute('aria-expanded', 'false');
           }
         }
       });
