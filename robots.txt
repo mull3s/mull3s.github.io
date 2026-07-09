@@ -1,4 +1,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://mull3s.github.io//sitemap.xml
+Sitemap: https://miladaburass.com/sitemap.xml
