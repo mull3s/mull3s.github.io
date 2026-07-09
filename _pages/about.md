@@ -26,3 +26,5 @@ latest_posts:
 ---
 
 Hello I am Milad. Currently editing this site. In the meantime, [here is a motivational video](https://www.youtube.com/watch?v=KxGRhd_iWuE).
+
+You can catch my photography on [pixelfed](https://pixelfed.social/miladaburass).
