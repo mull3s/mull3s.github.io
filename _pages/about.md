@@ -2,7 +2,7 @@
 layout: about
 title: about
 permalink: /
-subtitle: <a href='https://www.stardestroyers.sites.tau.ac.il/'>MSc Student</a> at Tel Aviv University.
+subtitle: <a href='https://www.stardestroyers.sites.tau.ac.il/'>MSc Student</a> @ Tel Aviv University.
 
 profile:
   align: right
@@ -25,4 +25,4 @@ latest_posts:
   limit: 3 # leave blank to include all the blog posts
 ---
 
-Hello, My name is Milad. Currently, trying to photometrically differenciate between Tidal Disruption Events (TDEs) and Supernovae of the Ia type (SNIa), hoping to apply this to a the [repeating TDE phenomenon](https://arxiv.org/abs/2609.33809).
+Hello, My name is Milad. Currently, trying to photometrically differentiate between Tidal Disruption Events (TDEs) and Supernovae of the Ia type (SNIa), hoping to apply this to a the [repeating TDE phenomenon](https://arxiv.org/abs/2609.33809).
